@@ -23,10 +23,11 @@ Nodo *CrearListaVacia();
 Nodo *CargarTareas(int ID);
 void TransferirTareas(Nodo **pendientes, Nodo **realizadas);
 void MostrarLista(Nodo *lista);
-
+void Pertenencia(Nodo *pendiente, Nodo *realizadas);
+void BuscarEnLista(Nodo *lista, int op, int id, char *palabra, char *estado);
 int main(){
     srand(time(NULL));
-    int bandera=1;
+    int bandera=1,opcion;
     int ID=1000;
     Nodo *listaPendientes = CrearListaVacia();
     Nodo *listaRealizadas = CrearListaVacia();
@@ -50,6 +51,11 @@ int main(){
     MostrarLista(listaRealizadas);
     printf("\n\nLISTADO DE TAREAS PENDIENTES:");
     MostrarLista(listaPendientes);
+
+    
+
+    Pertenencia(listaPendientes, listaRealizadas);
+
     return 0;
 }
 
@@ -119,7 +125,6 @@ void TransferirTareas(Nodo **pendientes, Nodo **realizadas) {
                 anterior->Siguiente = actual->Siguiente;
             }
 
-            
             actual = actual->Siguiente;
 
             // --- 2. INSERCIÓN DEL NODO EN LA LISTA DESTINO ---
@@ -138,4 +143,38 @@ void TransferirTareas(Nodo **pendientes, Nodo **realizadas) {
         }
     }
 }
+void BuscarEnLista(Nodo *lista, int op, int id, char *palabra, char *estado) {
+    while (lista != NULL) {
+        // Verifica si coincide el ID (op==1) o la palabra (op==2)
+        if ((op == 1 && lista->T.TareaID == id) || (op == 2 && strstr(lista->T.Descripcion, palabra) != NULL)) {
+            printf("\n[%s] ID: %d | Descripcion: %s", estado, lista->T.TareaID, lista->T.Descripcion);
+        }
+        lista = lista->Siguiente;
+    }
+}
+
+void Pertenencia(Nodo *pendientes, Nodo *realizadas) {
+int opcion,id=0;
+char busquedaParcial[MAX];
+printf("\n Desea buscar una tarea por ID o Palabra clave 1=ID 2=Palabra Clave");
+    scanf("%d",&opcion);
+if (opcion==1)//busqueda por id 
+{
+    printf("Ingrese ID: ");
+    scanf("%d", &id);
+} else if (opcion == 2) {
+        printf("Ingrese Palabra: "); 
+        fflush(stdin);
+        fgets(busquedaParcial, MAX, stdin);
+        busquedaParcial[strcspn(busquedaParcial, "\n")] = '\0';
+    } else return;
+
+    printf("\n--- RESULTADOS ---");
+    BuscarEnLista(pendientes, opcion, id, busquedaParcial, "PENDIENTE");
+    BuscarEnLista(realizadas, opcion, id, busquedaParcial, "REALIZADA");
+    printf("\n");
+}
+
+
+
 
